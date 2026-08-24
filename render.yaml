@@ -51,4 +51,3 @@ databases:
   - name: mama-mpoki-db
     plan: free
     databaseName: mamampoki
-    ipAllowType: ipv4
