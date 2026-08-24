@@ -3,30 +3,34 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Car, Users, UserCheck, Contact, BookOpen,
-  Route, Bus, FileText, LogOut, Menu, X, ChevronRight,
-  ClipboardList, Fuel, BarChart3, Settings, Bell
+  Route, Bus, LogOut, Menu,
+  ClipboardList, Fuel, BarChart3, Bell
 } from 'lucide-react';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    try { return localStorage.getItem('sidebar-collapsed') === 'true'; } catch { return false; }
+  });
+
+  const toggleCollapse = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try { localStorage.setItem('sidebar-collapsed', next); } catch {}
+  };
 
   const handleLogout = () => { logout(); navigate('/login'); };
-  const closeSidebar = () => setSidebarOpen(false);
 
   const NavLinkItem = ({ to, icon: Icon, children }) => (
-    <NavLink to={to} end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} onClick={closeSidebar}>
-      <Icon size={18} /> {children}
+    <NavLink to={to} end className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title={collapsed ? children : undefined}>
+      <Icon size={18} /> <span className="sidebar-link-text">{children}</span>
     </NavLink>
   );
 
   return (
     <div className="app-layout">
-      {/* Mobile overlay */}
-      <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={closeSidebar} />
-
-      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+      <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-brand">
             <Car size={20} />
@@ -63,8 +67,8 @@ export default function Layout({ children }) {
         </nav>
 
         <div className="sidebar-footer">
-          <button onClick={handleLogout}>
-            <LogOut size={14} /> Sign Out
+          <button onClick={handleLogout} title={collapsed ? 'Sign Out' : undefined}>
+            <LogOut size={14} /> <span className="sidebar-link-text">Sign Out</span>
           </button>
         </div>
       </aside>
@@ -72,7 +76,7 @@ export default function Layout({ children }) {
       <main className="main-content">
         <header className="topbar">
           <div className="topbar-left">
-            <button className="menu-btn mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
+            <button className="menu-btn" onClick={handleMenuClick} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
               <Menu size={20} />
             </button>
           </div>
