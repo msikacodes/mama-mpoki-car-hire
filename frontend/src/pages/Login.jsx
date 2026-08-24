@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Car, AlertCircle, Loader2 } from 'lucide-react';
+import Logo from '../assets/Logo';
+import { AlertCircle, Loader2 } from 'lucide-react';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -28,8 +29,8 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-logo">
-          <Car size={24} />
+        <div className="login-logo" style={{ background: 'none', boxShadow: 'none' }}>
+          <Logo size={56} />
         </div>
         <h1>Mama Mpoki Car Hire</h1>
         <p className="subtitle">Fleet Management System</p>

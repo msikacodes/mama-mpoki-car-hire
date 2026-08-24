@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../assets/Logo';
 import {
   LayoutDashboard, Car, Users, UserCheck, Contact, BookOpen,
   Route, Bus, LogOut, Menu,
@@ -35,7 +36,7 @@ export default function Layout({ children }) {
       <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-brand">
-            <Car size={20} />
+            <Logo size={38} />
           </div>
           <div className="sidebar-brand-text">
             <h1>MAMA MPOKI</h1>
