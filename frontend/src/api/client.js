@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8080/api/v1';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080') + '/api/v1';
 
 const client = axios.create({
   baseURL: API_BASE,
@@ -114,7 +114,7 @@ export const getVehicleProfitability = () => client.get('/reports/vehicle-profit
 // Report Downloads
 const downloadFile = (url, filename) => {
   const token = localStorage.getItem('accessToken');
-  return fetch(`http://localhost:8080/api/v1${url}`, {
+  return fetch(`${API_BASE}${url}`, {
     headers: { Authorization: `Bearer ${token}` }
   }).then(r => r.blob()).then(blob => {
     const a = document.createElement('a');

@@ -20,6 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -77,16 +80,18 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:5173,http://localhost:5175}")
+    private String allowedOrigins;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:8080",
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:5175"
-        ));
+        List<String> origins = new ArrayList<>();
+        for (String origin : allowedOrigins.split(",")) {
+            String trimmed = origin.trim();
+            if (!trimmed.isEmpty()) origins.add(trimmed);
+        }
+        configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

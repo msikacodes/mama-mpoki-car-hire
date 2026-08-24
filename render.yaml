@@ -1,0 +1,54 @@
+services:
+  # Spring Boot Backend
+  - type: web
+    name: mama-mpoki-api
+    runtime: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: mama-mpoki-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: mama-mpoki-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: mama-mpoki-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: mama-mpoki-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: mama-mpoki-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+
+  # React Frontend
+  - type: web
+    name: mama-mpoki-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    plan: free
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: mama-mpoki-api
+          property: url
+
+databases:
+  - name: mama-mpoki-db
+    plan: free
+    databaseName: mamampoki
+    ipAllowType: ipv4
