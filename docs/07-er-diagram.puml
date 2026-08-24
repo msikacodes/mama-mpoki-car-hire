@@ -1,0 +1,348 @@
+@startuml MamaMpokiCarHire_ERD
+' MAMA MPOKI CAR HIRE - Entity Relationship Diagram
+' Generated from design docs
+
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+skinparam entity {
+  BackgroundColor #F0F8FF
+  BorderColor #4A90D9
+  FontSize 12
+}
+skinparam relationship {
+  FontSize 11
+  LineColor #666666
+}
+
+title MAMA MPOKI CAR HIRE\nEntity Relationship Diagram
+
+' ===== OWNER =====
+entity "OWNER" as OWNER {
+  * id : BIGINT <<PK>>
+  --
+  * username : VARCHAR(50) <<UNIQUE>>
+  * password : VARCHAR(255)
+  * full_name : VARCHAR(100)
+  phone : VARCHAR(20)
+  email : VARCHAR(100)
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== VEHICLE =====
+entity "VEHICLE" as VEHICLE {
+  * id : BIGINT <<PK>>
+  --
+  * owner_id : BIGINT <<FK>>
+  * vehicle_type : ENUM <<COASTER|MINIBUS|DALADALA_BUS|PRIVATE_CAR|OTHER>>
+  * module_type : ENUM <<SPECIAL_HIRE|DALADALA|PRIVATE>>
+  make : VARCHAR(50)
+  model : VARCHAR(50)
+  year : INT
+  * reg_number : VARCHAR(20) <<UNIQUE>>
+  color : VARCHAR(30)
+  capacity : INT
+  fuel_type : ENUM <<DIESEL|PETROL|CNG|ELECTRIC>>
+  status : ENUM <<ACTIVE|INACTIVE|MAINTENANCE|RETIRED>>
+  photo_url : VARCHAR(500)
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== DRIVER =====
+entity "DRIVER" as DRIVER {
+  * id : BIGINT <<PK>>
+  --
+  * owner_id : BIGINT <<FK>>
+  * full_name : VARCHAR(100)
+  * phone : VARCHAR(20)
+  license_number : VARCHAR(50)
+  license_expiry : DATE
+  national_id : VARCHAR(50)
+  address : VARCHAR(200)
+  daily_rate : DECIMAL(10,2)
+  status : ENUM <<ACTIVE|INACTIVE|ON_LEAVE>>
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== CONDUCTOR =====
+entity "CONDUCTOR" as CONDUCTOR {
+  * id : BIGINT <<PK>>
+  --
+  * owner_id : BIGINT <<FK>>
+  * full_name : VARCHAR(100)
+  phone : VARCHAR(20)
+  national_id : VARCHAR(50)
+  address : VARCHAR(200)
+  daily_rate : DECIMAL(10,2)
+  status : ENUM <<ACTIVE|INACTIVE|ON_LEAVE>>
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== CUSTOMER =====
+entity "CUSTOMER" as CUSTOMER {
+  * id : BIGINT <<PK>>
+  --
+  * owner_id : BIGINT <<FK>>
+  * full_name : VARCHAR(100)
+  * phone : VARCHAR(20)
+  email : VARCHAR(100)
+  address : VARCHAR(200)
+  id_type : ENUM <<NATIONAL_ID|PASSPORT|DRIVING_LICENSE|OTHER>>
+  id_number : VARCHAR(50)
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== HIRE BOOKING =====
+entity "HIRE_BOOKING" as BOOKING {
+  * id : BIGINT <<PK>>
+  --
+  * owner_id : BIGINT <<FK>>
+  * vehicle_id : BIGINT <<FK>>
+  customer_id : BIGINT <<FK>>
+  * hire_date : DATE
+  end_date : DATE
+  destination : VARCHAR(200)
+  trip_purpose : VARCHAR(200)
+  * agreed_price : DECIMAL(12,2)
+  deposit_paid : DECIMAL(12,2)
+  status : ENUM <<PENDING|CONFIRMED|IN_PROGRESS|COMPLETED|CANCELLED>>
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== TRIP =====
+entity "TRIP" as TRIP {
+  * id : BIGINT <<PK>>
+  --
+  * booking_id : BIGINT <<FK>>
+  * driver_id : BIGINT <<FK>>
+  * vehicle_id : BIGINT <<FK>>
+  * start_date : DATE
+  end_date : DATE
+  destination : VARCHAR(200)
+  actual_price : DECIMAL(12,2)
+  odometer_start : INT
+  odometer_end : INT
+  status : ENUM <<SCHEDULED|IN_PROGRESS|COMPLETED|CANCELLED>>
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== TRIP EXPENSE =====
+entity "TRIP_EXPENSE" as TRIP_EXP {
+  * id : BIGINT <<PK>>
+  --
+  * trip_id : BIGINT <<FK>>
+  * expense_type : ENUM <<FUEL|DRIVER_ALLOWANCE|TOLL|FOOD|ACCOMMODATION|REPAIR|OTHER>>
+  * amount : DECIMAL(10,2)
+  description : VARCHAR(200)
+  * expense_date : DATE
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== PAYMENT =====
+entity "PAYMENT" as PAYMENT {
+  * id : BIGINT <<PK>>
+  --
+  * booking_id : BIGINT <<FK>>
+  * amount : DECIMAL(12,2)
+  * payment_method : ENUM <<CASH|MOBILE_MONEY|BANK_TRANSFER|CHEQUE|OTHER>>
+  * payment_date : DATE
+  reference_number : VARCHAR(100)
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== ROUTE =====
+entity "ROUTE" as ROUTE {
+  * id : BIGINT <<PK>>
+  --
+  * owner_id : BIGINT <<FK>>
+  * name : VARCHAR(100)
+  * start_point : VARCHAR(100)
+  * end_point : VARCHAR(100)
+  distance_km : DECIMAL(6,2)
+  * fare_amount : DECIMAL(8,2)
+  status : ENUM <<ACTIVE|INACTIVE>>
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== DAILY OPERATION =====
+entity "DAILY_OPERATION" as DAILY_OP {
+  * id : BIGINT <<PK>>
+  --
+  * vehicle_id : BIGINT <<FK>>
+  * route_id : BIGINT <<FK>>
+  driver_id : BIGINT <<FK>>
+  conductor_id : BIGINT <<FK>>
+  * operation_date : DATE
+  departure_time : TIME
+  return_time : TIME
+  total_passengers : INT
+  status : ENUM <<SCHEDULED|IN_PROGRESS|COMPLETED|CANCELLED>>
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== DAILY REVENUE =====
+entity "DAILY_REVENUE" as DAILY_REV {
+  * id : BIGINT <<PK>>
+  --
+  * operation_id : BIGINT <<FK>>
+  * source : ENUM <<FARE|CHARTER|ADVERTISING|OTHER>>
+  * amount : DECIMAL(10,2)
+  description : VARCHAR(200)
+  * revenue_date : DATE
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== DAILY EXPENSE =====
+entity "DAILY_EXPENSE" as DAILY_EXP {
+  * id : BIGINT <<PK>>
+  --
+  * operation_id : BIGINT <<FK>>
+  * expense_type : ENUM <<FUEL|REPAIR|TOLL|MAINTENANCE|CONDUCTOR_ALLOWANCE|OTHER>>
+  * amount : DECIMAL(10,2)
+  description : VARCHAR(200)
+  * expense_date : DATE
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== FUEL RECORD =====
+entity "FUEL_RECORD" as FUEL {
+  * id : BIGINT <<PK>>
+  --
+  * vehicle_id : BIGINT <<FK>>
+  * fuel_date : DATE
+  * liters : DECIMAL(8,2)
+  * cost_per_liter : DECIMAL(8,2)
+  * total_cost : DECIMAL(10,2)
+  odometer : INT
+  station : VARCHAR(100)
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== MAINTENANCE RECORD =====
+entity "MAINTENANCE_RECORD" as MAINT {
+  * id : BIGINT <<PK>>
+  --
+  * vehicle_id : BIGINT <<FK>>
+  * maintenance_date : DATE
+  * maintenance_type : ENUM <<SERVICE|REPAIR|INSPECTION|OIL_CHANGE|TIRE_CHANGE|BRAKE|OTHER>>
+  * description : TEXT
+  cost : DECIMAL(10,2)
+  garage_name : VARCHAR(100)
+  odometer : INT
+  next_service_date : DATE
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== PRIVATE CAR =====
+entity "PRIVATE_CAR" as PRIVATE {
+  * id : BIGINT <<PK>>
+  --
+  * vehicle_id : BIGINT <<FK>> <<UNIQUE>>
+  insurance_number : VARCHAR(50)
+  insurance_provider : VARCHAR(100)
+  insurance_expiry : DATE
+  registration_expiry : DATE
+  inspection_date : DATE
+  last_service_date : DATE
+  annual_mileage : INT
+  notes : TEXT
+  deleted : BOOLEAN
+  deleted_at : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+' ===== RELATIONSHIPS =====
+
+' Owner manages everything
+OWNER ||--o{ VEHICLE : "manages"
+OWNER ||--o{ DRIVER : "employs"
+OWNER ||--o{ CONDUCTOR : "employs"
+OWNER ||--o{ CUSTOMER : "records"
+OWNER ||--o{ BOOKING : "creates"
+OWNER ||--o{ ROUTE : "defines"
+
+' Vehicle relationships
+VEHICLE ||--o{ FUEL : "has"
+VEHICLE ||--o{ MAINT : "has"
+VEHICLE ||--o| PRIVATE : "extends"
+VEHICLE ||--o{ BOOKING : "assigned to"
+VEHICLE ||--o{ TRIP : "used in"
+VEHICLE ||--o{ DAILY_OP : "operated on"
+
+' Staff relationships
+DRIVER ||--o{ TRIP : "drives"
+DRIVER ||--o{ DAILY_OP : "drives"
+CONDUCTOR ||--o{ DAILY_OP : "manages fares"
+
+' Customer relationships
+CUSTOMER ||--o{ BOOKING : "books"
+
+' Booking relationships
+BOOKING ||--o{ TRIP : "contains"
+BOOKING ||--o{ PAYMENT : "receives"
+
+' Trip relationships
+TRIP ||--o{ TRIP_EXP : "incurs"
+
+' Route relationships
+ROUTE ||--o{ DAILY_OP : "followed on"
+
+' Daily operation relationships
+DAILY_OP ||--o{ DAILY_REV : "generates"
+DAILY_OP ||--o{ DAILY_EXP : "incurs"
+
+@enduml
