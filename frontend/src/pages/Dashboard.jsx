@@ -5,6 +5,7 @@ import {
   DollarSign, BarChart3, CheckCircle, Clock, Activity, Users,
   ArrowUpRight, ArrowDownRight
 } from 'lucide-react';
+import { SkeletonStatGrid } from '../components/SkeletonLoader';
 
 const fmt = (n) => new Intl.NumberFormat('en-TZ').format(n || 0);
 
@@ -17,10 +18,19 @@ export default function Dashboard() {
   }, []);
 
   if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-      <div style={{ textAlign: 'center', color: 'var(--slate-400)' }}>
-        <Activity size={32} style={{ marginBottom: 12, opacity: 0.4 }} />
-        <p>Loading dashboard...</p>
+    <div>
+      <div style={{ marginBottom: 20 }}>
+        <div className="skeleton skeleton-title" />
+        <div className="skeleton skeleton-subtitle" style={{ marginTop: 8 }} />
+      </div>
+      <SkeletonStatGrid count={4} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <div className="card"><div className="card-body">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 14, marginBottom: 10, width: `${70 + i * 5}%` }} />)}
+        </div></div>
+        <div className="card"><div className="card-body">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton" style={{ height: 14, marginBottom: 10, width: `${65 + i * 6}%` }} />)}
+        </div></div>
       </div>
     </div>
   );

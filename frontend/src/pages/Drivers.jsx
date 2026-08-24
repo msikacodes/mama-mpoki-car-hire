@@ -3,6 +3,7 @@ import { getDrivers, createDriver, updateDriver, deleteDriver } from '../api/cli
 import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
 import { Plus, Edit2, Trash2, Search, Users, Phone, CreditCard } from 'lucide-react';
+import { SkeletonTable } from '../components/SkeletonLoader';
 
 export default function Drivers() {
   const [drivers, setDrivers] = useState([]);
@@ -67,7 +68,7 @@ export default function Drivers() {
         <div style={{ padding: '14px 20px', borderBottom: '1px solid var(--slate-100)' }}>
           <div style={{ position: 'relative', maxWidth: 300 }}><Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--slate-400)' }} /><input className="form-control" style={{ paddingLeft: 34 }} placeholder="Search by name or phone..." value={search} onChange={e => setSearch(e.target.value)} /></div>
         </div>
-        <DataTable columns={columns} data={filtered} emptyText="No drivers found" />
+        {loading ? <SkeletonTable rows={5} cols={6} /> : <DataTable columns={columns} data={filtered} emptyText="No drivers found" />}
       </div>
       {showModal && (
         <Modal title={editItem ? 'Edit Driver' : 'Add New Driver'} onClose={() => setShowModal(false)}>

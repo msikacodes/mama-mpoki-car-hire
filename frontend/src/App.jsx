@@ -13,17 +13,29 @@ import RoutesPage from './pages/Routes';
 import Operations from './pages/Operations';
 import PrivateCars from './pages/PrivateCars';
 import Reports from './pages/Reports';
+import { Loader2 } from 'lucide-react';
+
+function LoadingScreen() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--slate-100)' }}>
+      <div style={{ textAlign: 'center' }}>
+        <Loader2 size={32} className="spin" style={{ color: 'var(--primary)', marginBottom: 12 }} />
+        <p style={{ fontSize: 13, color: 'var(--slate-500)', fontWeight: 500 }}>Loading...</p>
+      </div>
+    </div>
+  );
+}
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>Loading...</div>;
+  if (loading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" />;
   return <Layout>{children}</Layout>;
 }
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>Loading...</div>;
+  if (loading) return <LoadingScreen />;
 
   return (
     <Routes>

@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react';
 import { getVehicles, createVehicle, updateVehicle, deleteVehicle, updateVehicleStatus } from '../api/client';
 import DataTable from '../components/DataTable';
 import Modal from '../components/Modal';
-import { Plus, Edit2, Trash2, Search, Filter, Car, MoreVertical } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Car, Bus, Truck } from 'lucide-react';
+import { SkeletonPage, SkeletonTable } from '../components/SkeletonLoader';
 
-const MODULE_TYPES = ['SPECIAL_HIRE', 'DALADALA', 'PRIVATE'];
+const MODULE_TYPES = [
+  { value: 'SPECIAL_HIRE', label: 'Special Hire', icon: Car },
+  { value: 'DALADALA', label: 'Daladala', icon: Bus },
+  { value: 'PRIVATE', label: 'Private', icon: Truck },
+];
 const VEHICLE_TYPES = ['COASTER', 'MINIBUS', 'DALADALA_BUS', 'PRIVATE_CAR'];
 const FUEL_TYPES = ['DIESEL', 'PETROL', 'HYBRID', 'ELECTRIC'];
 
@@ -108,14 +113,14 @@ export default function Vehicles() {
             <Search size={15} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--slate-400)' }} />
             <input className="form-control" style={{ paddingLeft: 34 }} placeholder="Search vehicles..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
-          <div style={{ display: 'flex', gap: 4 }}>
-            <button className={`btn btn-xs ${!filter ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setFilter('')}>All</button>
+          <div className="filter-tabs">
+            <button className={`filter-tab ${!filter ? 'active' : ''}`} onClick={() => setFilter('')}>All</button>
             {MODULE_TYPES.map(t => (
-              <button key={t} className={`btn btn-xs ${filter === t ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setFilter(t)}>{t}</button>
+              <button key={t.value} className={`filter-tab ${filter === t.value ? 'active' : ''}`} onClick={() => setFilter(t.value)}><t.icon size={13} /> {t.label}</button>
             ))}
           </div>
         </div>
-        <DataTable columns={columns} data={filtered} emptyText="No vehicles found" />
+        {loading ? <SkeletonTable rows={5} cols={6} /> : <DataTable columns={columns} data={filtered} emptyText="No vehicles found" />}
       </div>
 
       {showModal && (
