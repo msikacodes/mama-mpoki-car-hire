@@ -20,6 +20,8 @@ export default function Layout({ children }) {
     try { localStorage.setItem('sidebar-collapsed', next); } catch {}
   };
 
+  const handleMenuClick = () => toggleCollapse();
+
   const handleLogout = () => { logout(); navigate('/login'); };
 
   const NavLinkItem = ({ to, icon: Icon, children }) => (
